@@ -24,18 +24,27 @@ contract TestCoin {
   // 代币总供应量
   function totalSupply()
   public pure returns (uint256) {
-    return 1000 * 1000 * 1000 * 100;
+    return 1e11;
   }
+
+  mapping (address => uint256) public balances;
 
   // 查询某地址下代币余额
   function balanceOf(address addr)
-  public pure returns (uint256) {
-    return 10000;
+  public view returns (uint256) {
+    return balances[addr];
   }
 
   // 发送代币到某地址
+  // 可能存在溢出错误
   function transfer(address to, uint256 value)
-  public pure returns (bool) {
+  public returns (bool) {
+    require(
+      balances[msg.sender] >= value,
+      "balance is not enough"
+    );
+    balances[msg.sender] -= value;
+    balances[to] += value;
     return true;
   }
 
