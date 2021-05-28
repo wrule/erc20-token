@@ -37,7 +37,6 @@ contract TestCoin {
   }
 
   // 发送代币到某地址
-  // 可能存在溢出错误
   function transfer(address to, uint256 value)
   public returns (bool) {
     require(
@@ -50,7 +49,7 @@ contract TestCoin {
     return true;
   }
 
-  // 两地址之间的代币转移
+  // 批准额度转账
   function transferFrom(address to, address from, uint256 value)
   public returns (bool) {
     uint256 myAllowance = allowed[from][msg.sender];
@@ -66,14 +65,18 @@ contract TestCoin {
     return true;
   }
 
+  // 给某地址批准额度
   function approve(address spender, uint256 value)
-  public pure returns (bool) {
+  public returns (bool) {
+    allowed[msg.sender][spender] = value;
+    emit Approval(msg.sender, spender, value);
     return true;
   }
 
+  // 查询批准额度
   function allowance(address owner, address spender)
-  public pure returns (uint256) {
-    return 0;
+  public view returns (uint256) {
+    return allowed[owner][spender];
   }
 
   event Transfer(address indexed from, address indexed to, uint256 value);
