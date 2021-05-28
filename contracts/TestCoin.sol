@@ -26,7 +26,7 @@ contract TestCoin {
   // 代币总供应量
   function totalSupply()
   public pure returns (uint256) {
-    return 1e11;
+    return 1e19;
   }
 
   // 存储每一个地址下的代币余额
