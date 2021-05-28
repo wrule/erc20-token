@@ -28,6 +28,7 @@ contract TestCoin {
   }
 
   mapping (address => uint256) public balances;
+  mapping (address => mapping (address => uint256)) public allowed;
 
   // 查询某地址下代币余额
   function balanceOf(address addr)
@@ -45,12 +46,23 @@ contract TestCoin {
     );
     balances[msg.sender] -= value;
     balances[to] += value;
+    emit Transfer(msg.sender, to, value);
     return true;
   }
 
   // 两地址之间的代币转移
   function transferFrom(address to, address from, uint256 value)
-  public pure returns (bool) {
+  public returns (bool) {
+    uint256 myAllowance = allowed[from][msg.sender];
+    require(
+      balances[from] >= value && myAllowance >= value,
+      "allowance is not enough"
+    );
+    balances[from] -= value;
+    // 可能会出现溢出错误？
+    allowed[from][msg.sender] -= value;
+    balances[to] += value;
+    emit Transfer(from, to, value);
     return true;
   }
 
